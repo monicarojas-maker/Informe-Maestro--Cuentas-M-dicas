@@ -1,0 +1,401 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informe Maestro - Reingenieria Cuentas Medicas 2025</title>
+<style>
+:root{--azul:#003366;--azul2:#0066cc;--bg:#f7f8fa;--blanco:#fff;--borde:#e5e7eb;--tx:#374151;--tx2:#6b7280;--tx3:#9ca3af;--verde:#16a34a;--rojo:#dc2626;--naranja:#ea580c;--amarillo:#ca8a04}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
+.page-header{padding:2rem 2.5rem 1rem;border-bottom:1px solid var(--borde);background:var(--blanco)}
+.header-top{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.page-title{font-size:1.75rem;font-weight:800;color:#111827}
+.jira-badge{display:inline-block;padding:.25rem .7rem;border-radius:6px;background:#eff6ff;color:var(--azul2);font-size:.78rem;font-weight:700;text-decoration:none}
+.jira-badge:hover{background:#dbeafe}
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap}
+.tab{padding:.5rem 1.2rem;border-radius:8px;font-size:.84rem;font-weight:600;cursor:pointer;border:1px solid var(--borde);background:var(--blanco);color:var(--tx2);transition:all .15s}
+.tab.active{background:var(--azul);color:var(--blanco);border-color:var(--azul)}
+.tab:hover:not(.active){background:#f0f1f3}
+.tab-content{display:none;padding:2rem 2.5rem;max-width:1400px}
+.tab-content.active{display:block}
+.section{margin-bottom:2.5rem}
+.section-title{font-size:1.25rem;font-weight:700;color:#111827;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--azul)}
+.section-subtitle{font-size:1rem;font-weight:700;color:var(--azul);margin-bottom:.7rem;margin-top:1.5rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi-card{background:var(--blanco);border-radius:10px;padding:1.2rem;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid var(--azul2);text-align:center}
+.kpi-card .value{font-size:1.6rem;font-weight:800;color:#111827}
+.kpi-card .label{font-size:.75rem;color:var(--tx2);margin-top:.2rem}
+.kpi-card.green{border-left-color:var(--verde)}
+.kpi-card.red{border-left-color:var(--rojo)}
+.kpi-card.orange{border-left-color:var(--naranja)}
+.tbl-wrap{overflow-x:auto;background:var(--blanco);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:1.5rem}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead{background:#f9fafb}
+th{padding:.7rem .9rem;text-align:left;font-weight:700;color:var(--tx2);border-bottom:2px solid var(--borde);white-space:nowrap}
+td{padding:.6rem .9rem;border-bottom:1px solid var(--borde);color:var(--tx);vertical-align:top}
+tr:hover{background:#f9fafb}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:6px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge-done{background:#dcfce7;color:var(--verde)}
+.badge-progress{background:#fef9c3;color:var(--amarillo)}
+.badge-blocked{background:#fed7aa;color:var(--naranja)}
+.badge-pending{background:#fee2e2;color:var(--rojo)}
+.info-box{background:var(--blanco);border-radius:10px;padding:1.2rem 1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:1rem;border-left:4px solid var(--azul2)}
+.info-box.risk{border-left-color:var(--rojo)}
+.info-box.warning{border-left-color:var(--naranja)}
+.info-box.dep{border-left-color:var(--azul)}
+.bubble-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin-bottom:1.5rem}
+.bubble{background:var(--blanco);border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.bubble::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.bubble.dep::before{background:var(--azul2)}
+.bubble.risk::before{background:var(--rojo)}
+.bubble.warn::before{background:var(--naranja)}
+.bubble .b-icon{font-size:1.8rem;margin-bottom:.6rem}
+.bubble .b-title{font-size:.9rem;font-weight:700;color:#111827;margin-bottom:.4rem}
+.bubble .b-desc{font-size:.78rem;color:var(--tx2);line-height:1.5}
+.info-box .box-title{font-weight:700;font-size:.88rem;color:#111827;margin-bottom:.3rem}
+.info-box .box-desc{font-size:.8rem;color:var(--tx2);line-height:1.5}
+.team-list{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1rem}
+.team-member{background:var(--blanco);border:1px solid var(--borde);border-radius:8px;padding:.4rem .8rem;font-size:.78rem;font-weight:500;color:var(--tx)}
+.team-member.lead{background:var(--azul);color:var(--blanco);border-color:var(--azul)}
+.arch-diagram{background:var(--blanco);border-radius:12px;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow-x:auto}
+.arch-flow{display:flex;flex-direction:column;align-items:center;gap:.8rem;min-width:700px}
+.arch-row{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:nowrap}
+.arch-box{color:var(--blanco);padding:.55rem 1rem;border-radius:8px;font-size:.76rem;font-weight:600;text-align:center;min-width:130px;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+.arch-box.primary{background:var(--azul)}
+.arch-box.secondary{background:var(--azul2)}
+.arch-box.green{background:var(--verde)}
+.arch-box.orange{background:var(--naranja)}
+.arch-box.purple{background:#7c3aed}
+.arch-box.red{background:var(--rojo)}
+.arch-arrow{font-size:1.5rem;color:var(--tx3);line-height:1}
+.footer{padding:1rem 2.5rem;color:var(--tx3);font-size:.72rem;border-top:1px solid var(--borde);background:var(--blanco);text-align:center;margin-top:2rem}
+@media(max-width:900px){.tab-content{padding:1.5rem 1rem}.kpi-grid{grid-template-columns:repeat(2,1fr)}.arch-flow{min-width:auto}}
+@media(max-width:600px){.page-header{padding:1.5rem 1rem}.kpi-grid{grid-template-columns:1fr}.header-top{flex-direction:column;align-items:flex-start}.tabs{gap:.3rem}}
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="header-top">
+    <h1 class="page-title">Informe Maestro - Reingenieria Cuentas Medicas</h1>
+    <a class="jira-badge" href="https://segurosbolivar.atlassian.net/browse/GD-1130" target="_blank">GD-1130</a>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">Informe Maestro</div>
+    <div class="tab" onclick="switchTab(1)">Arquitectura</div>
+    <div class="tab" onclick="switchTab(2)">Dependencias y APIs</div>
+  </div>
+</div>
+<!-- TAB 1 -->
+<div class="tab-content active" id="tab-0">
+  <div class="section">
+    <h2 class="section-title">1. Resumen Ejecutivo</h2>
+    <p style="font-size:.88rem;color:var(--tx);margin-bottom:1rem"><strong>Objetivo:</strong> Transformar y automatizar el ciclo de vida de facturacion y pagos a prestadores de salud.</p>
+    <div class="kpi-grid">
+      <div class="kpi-card green"><div class="value">19d - 5d</div><div class="label">Tiempo promedio de pago</div></div>
+      <div class="kpi-card green"><div class="value">$400M - $250M</div><div class="label">Costo mensual</div></div>
+      <div class="kpi-card"><div class="value">60%</div><div class="label">Auditoria automatica facturas</div></div>
+      <div class="kpi-card"><div class="value">80%</div><div class="label">Autorizacion automatica pagos</div></div>
+      <div class="kpi-card red"><div class="value">-80%</div><div class="label">Escalamientos y reprocesos</div></div>
+    </div>
+    <h3 class="section-subtitle">Equipo</h3>
+    <div class="team-list">
+      <span class="team-member lead">Juan David Martinez Avila (Lead)</span>
+      <span class="team-member">David Jordan Amaya</span>
+      <span class="team-member">Sergio Fabian Hernandez Vivas</span>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="value">Iteracion 7</div><div class="label">En Progreso (mayo 2026)</div></div>
+      <div class="kpi-card green"><div class="value">1 - 6</div><div class="label">Iteraciones completadas</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">2. Alcance del Proyecto</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Componente</th><th>Entregables</th></tr></thead><tbody>
+      <tr><td><strong>Radicacion e Indexacion</strong></td><td>Validacion CUV via BIRC (MinSalud), Extraccion IA con GCP Gemini + n8n, Gestion archivos 20MB (AWS S3/SQS/Lambdas)</td></tr>
+      <tr><td><strong>Portales y Frontend</strong></td><td>Front radicacion Angular 21, reCaptcha v3, Bolivar UI</td></tr>
+      <tr><td><strong>Liquidacion y Auditoria</strong></td><td>Motor reglas OpenL (coberturas, tarifas CUPS, topes), Interoperabilidad TRONADOR/SISALUD via Oracle 12</td></tr>
+      <tr><td><strong>Glosas y Notificaciones</strong></td><td>Tipificacion automatica glosas (A, B, C, D), Integracion 4-72 (acuse recibo legal)</td></tr>
+      <tr><td><strong>Automatizacion Pagos</strong></td><td>Bizagi BPMS para flujos de autorizacion, 80% pagos automaticos facturas simples</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">3. Cronograma Maestro</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Fase</th><th>Fechas</th><th>Estado</th></tr></thead><tbody>
+      <tr><td>Repositorios y BD</td><td>Inicio mar 2026</td><td><span class="badge badge-done">Completado</span></td></tr>
+      <tr><td>Motor Reglas OpenL</td><td>16/03 - 30/03/2026</td><td><span class="badge badge-done">Completado</span></td></tr>
+      <tr><td>POC n8n validacion soportes</td><td>23/02 - 03/03/2026</td><td><span class="badge badge-done">Completado</span></td></tr>
+      <tr><td>reCaptcha v3 Front</td><td>26/03 - 09/04/2026</td><td><span class="badge badge-done">Completado</span></td></tr>
+      <tr><td>Migracion Angular 21</td><td>21/04 - 22/04/2026</td><td><span class="badge badge-done">Completado</span></td></tr>
+      <tr><td>Validacion XML + RIPS</td><td>26/03 - 09/04/2026</td><td><span class="badge badge-blocked">Bloqueado (bugs reCaptcha)</span></td></tr>
+      <tr><td>Reglas complejidad</td><td>22/04 - 23/04/2026</td><td><span class="badge badge-done">Completado</span></td></tr>
+      <tr><td>Spikes liquidacion Sisalud</td><td>Desde 24/03/2026</td><td><span class="badge badge-progress">En progreso</span></td></tr>
+      <tr><td>Flujo Bizagi descriptivo</td><td>Desde 22/04/2026</td><td><span class="badge badge-progress">En progreso</span></td></tr>
+      <tr><td>Liquidacion Backend</td><td>-</td><td><span class="badge badge-pending">No iniciada</span></td></tr>
+      <tr><td>Notificacion 4-72</td><td>-</td><td><span class="badge badge-pending">No iniciada</span></td></tr>
+      <tr><td>Pagos Automaticos</td><td>-</td><td><span class="badge badge-pending">No iniciada</span></td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">4. Contenido Estrategico</h2>
+    <h3 class="section-subtitle">Volumetria Mensual</h3>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="value">24,127</div><div class="label">Facturas Salud</div></div>
+      <div class="kpi-card"><div class="value">191,962</div><div class="label">CUPS Salud</div></div>
+      <div class="kpi-card"><div class="value">20,227</div><div class="label">Facturas ARL</div></div>
+      <div class="kpi-card"><div class="value">78,600</div><div class="label">CUPS ARL</div></div>
+      <div class="kpi-card orange"><div class="value">480,000+</div><div class="label">Registros / semestre</div></div>
+    </div>
+    <h3 class="section-subtitle">Dolores Identificados</h3>
+    <div class="info-box risk"><div class="box-title">Sistema fragmentado (Imagine-Sisalud)</div><div class="box-desc">INS prestadores: 54 | 65% escalamientos por AVAL | Procesos manuales con alta tasa de error</div></div>
+    <h3 class="section-subtitle">Riesgos de No Ejecucion</h3>
+    <div class="info-box warning"><div class="box-title">Impacto financiero y regulatorio</div><div class="box-desc">$400M/mes costos manuales - Sanciones regulatorias (Manual Unico Glosas) - Deterioro red prestadores</div></div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">5. Dependencias y Riesgos</h2>
+    <div class="bubble-grid">
+      <div class="bubble dep">
+        <div class="b-icon">🔗</div>
+        <div class="b-title">Dependencia Integraciones Core</div>
+        <div class="b-desc">El flujo no se ejecuta sin respuesta de BIRC MinSalud (validacion CUV), TRONADOR (polizas) y SISALUD (liquidacion). Si una integracion falla, el proceso va a cola de reintentos en n8n.</div>
+      </div>
+      <div class="bubble dep">
+        <div class="b-icon">🔗</div>
+        <div class="b-title">Dependencia: Proveedor 4-72</div>
+        <div class="b-desc">Validacion juridica y entrega de acuses de recibo de las Glosas. Sin respuesta de 4-72, no se puede cerrar el ciclo de notificacion legal al prestador.</div>
+      </div>
+      <div class="bubble dep">
+        <div class="b-icon">🔗</div>
+        <div class="b-title">Dependencia: IPS y GoMedeSys</div>
+        <div class="b-desc">Consumo de Historia Clinica y facturacion electronica. Dependencia absoluta para validacion de soportes medicos y cruce con CUPS.</div>
+      </div>
+      <div class="bubble risk">
+        <div class="b-icon">🤖</div>
+        <div class="b-title">Riesgo IA: Transicion Proveedor Imagine</div>
+        <div class="b-desc">PPT indica reemplazo total por OCR/IA (GCP Gemini), pero arquitectura sigue mapeando "Digitador Imagine" como activo. Falta claridad: apagado total o uso hibrido durante transicion.</div>
+      </div>
+      <div class="bubble risk">
+        <div class="b-icon">📊</div>
+        <div class="b-title">Riesgo: Backend No Iniciado</div>
+        <div class="b-desc">Liquidacion, Notificacion 4-72 y Pagos Automaticos en estado "No iniciada". Front avanzado (Angular 21 + reCaptcha completados) pero backend critico rezagado significativamente.</div>
+      </div>
+      <div class="bubble warn">
+        <div class="b-icon">⚠️</div>
+        <div class="b-title">Bloqueo Activo: Bugs reCaptcha</div>
+        <div class="b-desc">Impide probar flujo de validacion de soportes completos (XML y RIPS). El front de radicacion genera errores que bloquean la integracion con el backend de validacion.</div>
+      </div>
+      <div class="bubble warn">
+        <div class="b-icon">⚠️</div>
+        <div class="b-title">Bloqueo: Plantillas Notificacion</div>
+        <div class="b-desc">Falta definicion de negocio para creacion de plantillas de notificacion al proveedor. Detiene el Flujo 11 completo hasta que el area funcional entregue los templates.</div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">6. Matriz de Coherencia (Discrepancias)</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Discrepancia</th><th>Detalle</th><th>Impacto</th></tr></thead><tbody>
+      <tr><td><strong>Fechas atipicas en CSV</strong></td><td>Tarea 2 inicia 23/2/2025 y termina 26/2/2026 (para 2 horas). Tarea 92 finaliza 13/2/2026 (fecha pasada).</td><td><span class="badge badge-blocked">Medio</span></td></tr>
+      <tr><td><strong>Imagine: PPT vs Arquitectura</strong></td><td>PPT dice reemplazar, arquitectura lo mantiene activo, cronograma tiene backup tablas Imagine sin fecha.</td><td><span class="badge badge-pending">Alto</span></td></tr>
+      <tr><td><strong>Progreso desbalanceado</strong></td><td>Front completado, Backend (liquidacion/pagos) no iniciado.</td><td><span class="badge badge-pending">Alto</span></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+<!-- TAB 2: ARQUITECTURA -->
+<div class="tab-content" id="tab-1">
+  <div class="section">
+    <h2 class="section-title">Arquitectura del Sistema</h2>
+    <p style="font-size:.85rem;color:var(--tx2);margin-bottom:1.5rem">Diagrama de componentes y flujo de datos del sistema de Reingenieria de Cuentas Medicas.</p>
+    <div class="arch-diagram">
+      <div class="arch-flow">
+        <div class="arch-row"><div class="arch-box purple">Prestador / IPS</div></div>
+        <div class="arch-arrow">&#x2193;</div>
+        <div class="arch-row"><div class="arch-box secondary">Front Angular 21 + reCaptcha v3</div></div>
+        <div class="arch-arrow">&#x2193;</div>
+        <div class="arch-row"><div class="arch-box orange">AWS S3 / SQS / Lambdas (archivos 20MB)</div></div>
+        <div class="arch-arrow">&#x2193;</div>
+        <div class="arch-row">
+          <div class="arch-box green">n8n Orquestador</div>
+          <div class="arch-arrow">&#x2192;</div>
+          <div class="arch-box secondary">GCP Gemini (IA extraccion)</div>
+        </div>
+        <div class="arch-arrow">&#x2193;</div>
+        <div class="arch-row">
+          <div class="arch-box purple">BIRC MinSalud (CUV)</div>
+          <div class="arch-box primary">Motor OpenL (reglas)</div>
+        </div>
+        <div class="arch-arrow">&#x2193;</div>
+        <div class="arch-row">
+          <div class="arch-box primary">TRONADOR (polizas)</div>
+          <div class="arch-box primary">SISALUD Salud</div>
+          <div class="arch-box primary">SISALUD ARL</div>
+          <div class="arch-arrow">&#x2190;</div>
+          <div class="arch-box red">Oracle DB 12</div>
+        </div>
+        <div class="arch-arrow">&#x2193;</div>
+        <div class="arch-row"><div class="arch-box secondary">Bizagi BPMS (flujos autorizacion)</div></div>
+        <div class="arch-arrow">&#x2193;</div>
+        <div class="arch-row">
+          <div class="arch-box orange">4-72 (notificacion legal)</div>
+          <div class="arch-arrow">&#x2192;</div>
+          <div class="arch-box green">Pagos Automaticos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <h2 class="section-title">Componentes Clave</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Componente</th><th>Tecnologia</th><th>Funcion</th></tr></thead><tbody>
+      <tr><td>Frontend</td><td>Angular 21 + Bolivar UI</td><td>Portal radicacion prestadores con reCaptcha v3</td></tr>
+      <tr><td>Almacenamiento</td><td>AWS S3 + SQS + Lambdas</td><td>Gestion archivos hasta 20MB con colas asincronas</td></tr>
+      <tr><td>Orquestacion IA</td><td>n8n + GCP Gemini</td><td>Extraccion inteligente de datos de facturas</td></tr>
+      <tr><td>Validacion CUV</td><td>BIRC MinSalud</td><td>Verificacion obligatoria de factura electronica</td></tr>
+      <tr><td>Motor Reglas</td><td>OpenL Tablets</td><td>Coberturas, tarifas CUPS, topes, complejidad</td></tr>
+      <tr><td>Core Seguros</td><td>TRONADOR + SISALUD + Oracle 12</td><td>Polizas, liquidacion, interoperabilidad</td></tr>
+      <tr><td>Flujos BPM</td><td>Bizagi BPMS</td><td>Autorizacion y auditoria de pagos</td></tr>
+      <tr><td>Notificacion</td><td>Integracion 4-72</td><td>Acuse recibo legal de glosas</td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+<!-- TAB 3: DEPENDENCIAS Y APIs POR SQUAD -->
+<div class="tab-content" id="tab-2">
+  <div class="section">
+    <h2 class="section-title">Dependencias APIs por Squad</h2>
+    <div style="background:#0f172a;border-radius:16px;padding:2rem;position:relative;overflow:hidden;min-height:700px">
+      <!-- Nodo central -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#38bdf8 0%,#0066cc 60%,#003366 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 0 60px rgba(56,189,248,.4);z-index:10">
+        <span style="color:#fff;font-size:.9rem;font-weight:800">Reingenieria</span>
+        <span style="color:#93c5fd;font-size:.7rem">Cuentas Medicas</span>
+      </div>
+      <!-- Líneas SVG -->
+      <svg style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1" viewBox="0 0 1000 700">
+        <line x1="500" y1="350" x2="200" y2="120" stroke="#f87171" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="150" y2="300" stroke="#f87171" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="180" y2="480" stroke="#4ade80" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="350" y2="600" stroke="#fbbf24" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="550" y2="600" stroke="#4ade80" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="800" y2="200" stroke="#fb923c" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="820" y2="400" stroke="#a78bfa" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="750" y2="550" stroke="#4ade80" stroke-width="1" opacity=".4"/>
+        <line x1="500" y1="350" x2="500" y2="80" stroke="#38bdf8" stroke-width="1" opacity=".4"/>
+      </svg>
+      <!-- Grupo: Carpeta Unica -->
+      <div style="position:absolute;top:8%;left:12%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#f87171;border:3px solid #991b1b;display:flex;align-items:center;justify-content:center;font-size:.7rem">📁</div>
+          <span style="color:#f87171;font-size:.78rem;font-weight:700">Carpeta Unica</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">gestor-doc-upload</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">gestor-doc-escanear</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">gestor-doc-consulta</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">gestor-doc-validar</span></div>
+        </div>
+      </div>
+      <!-- Grupo: Facturacion Electronica -->
+      <div style="position:absolute;top:4%;left:42%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#38bdf8;border:3px solid #0369a1;display:flex;align-items:center;justify-content:center;font-size:.7rem">⚡</div>
+          <span style="color:#38bdf8;font-size:.78rem;font-weight:700">Facturacion Elect.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#38bdf8;border:2px solid #0c4a6e"></div><span style="color:#94a3b8;font-size:.65rem">validacion-CUV-BIRC</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#38bdf8;border:2px solid #0c4a6e"></div><span style="color:#94a3b8;font-size:.65rem">extraccion-IA-Gemini</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#fb923c;border:2px solid #9a3412"></div><span style="color:#94a3b8;font-size:.65rem">notificaciones-4-72</span></div>
+        </div>
+      </div>
+      <!-- Grupo: Bienestar -->
+      <div style="position:absolute;top:35%;left:5%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#f87171;border:3px solid #991b1b;display:flex;align-items:center;justify-content:center;font-size:.7rem">🏥</div>
+          <span style="color:#f87171;font-size:.78rem;font-weight:700">Bienestar</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">consulta-polizas-salud</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">auditoria-medica</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">liquidacion-sisalud</span></div>
+        </div>
+      </div>
+      <!-- Grupo: Ingresos y Egresos -->
+      <div style="position:absolute;top:78%;left:25%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#fbbf24;border:3px solid #92400e;display:flex;align-items:center;justify-content:center;font-size:.7rem">💰</div>
+          <span style="color:#fbbf24;font-size:.78rem;font-weight:700">Ingresos y Egresos</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">liquidacion-orden-pago</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">consulta-cuentas-bancarias</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">consulta-deuda-poliza</span></div>
+        </div>
+      </div>
+      <!-- Grupo: Comunes -->
+      <div style="position:absolute;top:78%;left:50%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#4ade80;border:3px solid #166534;display:flex;align-items:center;justify-content:center;font-size:.7rem">🔗</div>
+          <span style="color:#4ade80;font-size:.78rem;font-weight:700">Comunes</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">consulta-registraduria</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">calificacion-sarlaft</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">consulta-tercero-juridico</span></div>
+        </div>
+      </div>
+      <!-- Grupo: Core X -->
+      <div style="position:absolute;top:22%;right:8%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#fb923c;border:3px solid #9a3412;display:flex;align-items:center;justify-content:center;font-size:.7rem">⚙️</div>
+          <span style="color:#fb923c;font-size:.78rem;font-weight:700">Core X</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#fb923c;border:2px solid #9a3412"></div><span style="color:#94a3b8;font-size:.65rem">openl-reglas-ia</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#fb923c;border:2px solid #9a3412"></div><span style="color:#94a3b8;font-size:.65rem">consulta-control-tecnico</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#fb923c;border:2px solid #9a3412"></div><span style="color:#94a3b8;font-size:.65rem">consulta-entidades-param</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#fb923c;border:2px solid #9a3412"></div><span style="color:#94a3b8;font-size:.65rem">consulta-datos-poliza</span></div>
+        </div>
+      </div>
+      <!-- Grupo: Lago de Datos -->
+      <div style="position:absolute;top:8%;right:15%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#a78bfa;border:3px solid #5b21b6;display:flex;align-items:center;justify-content:center;font-size:.7rem">📊</div>
+          <span style="color:#a78bfa;font-size:.78rem;font-weight:700">Lago de Datos</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#a78bfa;border:2px solid #5b21b6"></div><span style="color:#94a3b8;font-size:.65rem">analitica-GCP-Gemini</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#f87171;border:2px solid #7f1d1d"></div><span style="color:#94a3b8;font-size:.65rem">n8n-orquestador</span></div>
+        </div>
+      </div>
+      <!-- Grupo: Juridico -->
+      <div style="position:absolute;top:60%;right:12%;z-index:5">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:#4ade80;border:3px solid #166534;display:flex;align-items:center;justify-content:center;font-size:.7rem">⚖️</div>
+          <span style="color:#4ade80;font-size:.78rem;font-weight:700">Juridico</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;padding-left:1.5rem">
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">liberacion-reserva</span></div>
+          <div style="display:flex;align-items:center;gap:.3rem"><div style="width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid #166534"></div><span style="color:#94a3b8;font-size:.65rem">glosas-tipificacion</span></div>
+        </div>
+      </div>
+      <!-- Leyenda -->
+      <div style="position:absolute;bottom:1rem;right:1.5rem;z-index:10;display:flex;gap:1rem;align-items:center">
+        <div style="display:flex;align-items:center;gap:.3rem"><div style="width:10px;height:10px;border-radius:50%;background:#4ade80"></div><span style="color:#94a3b8;font-size:.6rem">Disponible</span></div>
+        <div style="display:flex;align-items:center;gap:.3rem"><div style="width:10px;height:10px;border-radius:50%;background:#fb923c"></div><span style="color:#94a3b8;font-size:.6rem">En desarrollo</span></div>
+        <div style="display:flex;align-items:center;gap:.3rem"><div style="width:10px;height:10px;border-radius:50%;background:#f87171"></div><span style="color:#94a3b8;font-size:.6rem">No iniciado</span></div>
+      </div>
+      <!-- Contador -->
+      <div style="position:absolute;top:1rem;right:1.5rem;z-index:10;text-align:right">
+        <div style="font-size:2rem;font-weight:800;color:#38bdf8">28</div>
+        <div style="font-size:.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">APIs</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="footer">
+  Generado automaticamente - Informe Maestro Reingenieria Cuentas Medicas - Mayo 2026 | Proyecto Jira: <a href="https://segurosbolivar.atlassian.net/browse/GD-1130" target="_blank" style="color:var(--azul2)">GD-1130</a>
+</div>
+<script>
+function switchTab(idx){
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',i===idx)});
+  document.querySelectorAll('.tab-content').forEach((c,i)=>{c.classList.toggle('active',i===idx)});
+}
+</script>
+</body>
+</html>
